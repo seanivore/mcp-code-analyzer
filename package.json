@@ -1,0 +1,16 @@
+{
+  "name": "@modelcontextprotocol/server-code-analyzer",
+  "version": "0.1.0",
+  "description": "Python code analyzer MCP server",
+  "main": "bin/mcp-code-analyzer.js",
+  "bin": {
+    "mcp-code-analyzer": "./bin/mcp-code-analyzer.js"
+  },
+  "scripts": {
+    "start": "node ./bin/mcp-code-analyzer.js",
+    "postinstall": "pip install ."
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "^latest"
+  }
+}

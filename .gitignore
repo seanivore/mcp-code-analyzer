@@ -1,0 +1,24 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+dist/
+build/
+*.egg-info/
+
+# Node.js
+node_modules/
+package-lock.json
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Environment
+.env
+*.log
