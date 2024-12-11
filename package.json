@@ -1,16 +1,24 @@
 {
-  "name": "@modelcontextprotocol/server-code-analyzer",
+  "name": "mcp-code-analyzer",
   "version": "0.1.0",
   "description": "Python code analyzer MCP server",
-  "main": "bin/mcp-code-analyzer.js",
+  "main": "build/index.js",
   "bin": {
     "mcp-code-analyzer": "./bin/mcp-code-analyzer.js"
   },
   "scripts": {
-    "start": "node ./bin/mcp-code-analyzer.js",
+    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "start": "node ./build/index.js",
     "postinstall": "pip install ."
   },
   "dependencies": {
-    "@modelcontextprotocol/server": "^latest"
+    "@anthropic-ai/sdk": "^0.32.1",
+    "@babel/parser": "^7.26.3",
+    "@babel/traverse": "^7.26.4"
+  },
+  "devDependencies": {
+    "@types/babel__traverse": "^7.20.6",
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
   }
 }
