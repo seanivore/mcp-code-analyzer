@@ -1,32 +1,33 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as http from 'http';
 
 interface AnalyzeCodeArgs {
   file_path: string;
   analysis_type: 'structure' | 'complexity' | 'dependencies';
 }
 
-function analyzeCode(args: AnalyzeCodeArgs): string {
-  console.log('Analyzing code:', args);
-  
+async function analyzeCode(args: AnalyzeCodeArgs): Promise<string> {
   const { file_path, analysis_type } = args;
 
   if (!fs.existsSync(file_path)) {
-    return `Error: File not found: ${file_path}`;
+    throw new Error(`File not found: ${file_path}`);
   }
 
   if (path.extname(file_path) !== '.py') {
-    return 'Error: Only Python files are supported';
+    throw new Error('Only Python files are supported');
   }
 
   const fileContents = fs.readFileSync(file_path, 'utf-8');
-  console.log('File contents:', fileContents);
 
-  if (analysis_type === 'structure') {
-    return analyzeStructure(fileContents);
-  } else {
-    return `Analysis type ${analysis_type} not implemented yet`;
+  switch (analysis_type) {
+    case 'structure':
+      return analyzeStructure(fileContents);
+    case 'complexity':
+      return analyzeComplexity(fileContents);
+    case 'dependencies':
+      return analyzeDependencies(fileContents);
+    default:
+      throw new Error(`Unknown analysis type: ${analysis_type}`);
   }
 }
 
@@ -50,34 +51,30 @@ function analyzeStructure(code: string): string {
   return JSON.stringify(structure, null, 2);
 }
 
-const server = http.createServer((req, res) => {
-  console.log('Received request:', req.method, req.url);
+function analyzeComplexity(code: string): string {
+  return JSON.stringify({ message: "Complexity analysis not yet implemented" });
+}
 
-  if (req.method === 'POST' && req.url === '/analyze') {
-    let body = '';
-    req.on('data', chunk => {
-      body += chunk.toString();
-    });
-    req.on('end', () => {
-      console.log('Received body:', body);
-      try {
-        const args: AnalyzeCodeArgs = JSON.parse(body);
-        const result = analyzeCode(args);
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ result }));
-      } catch (error) {
-        console.error('Error:', error);
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'An error occurred' }));
-      }
-    });
-  } else {
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end('Not Found');
+function analyzeDependencies(code: string): string {
+  return JSON.stringify({ message: "Dependency analysis not yet implemented" });
+}
+
+// Main execution
+if (require.main === module) {
+  const args = process.argv.slice(2);
+  if (args.length !== 2) {
+    console.error('Usage: node index.js <file_path> <analysis_type>');
+    process.exit(1);
   }
-});
 
-const PORT = 3000;
-server.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+  const [file_path, analysis_type] = args;
+  
+  analyzeCode({ file_path, analysis_type } as AnalyzeCodeArgs)
+    .then(result => {
+      console.log(result);
+    })
+    .catch(error => {
+      console.error('Error:', error.message);
+      process.exit(1);
+    });
+}
